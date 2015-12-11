@@ -37,20 +37,22 @@ class ViewController: UIViewController {
             if let result = brain.performOperation(operation) {
                 displayValue = result
             } else {
-                displayValue = 0 // should really just set to nil
+                displayValue = nil
             }
         }
     }
     
     @IBAction func enter() {
         if userIsInTheMiddleOfTypingANumber {
-            historyValue = String(displayValue)
+            historyValue = displayValue == nil ? "" : String(displayValue!)
         }
         userIsInTheMiddleOfTypingANumber = false
-        if let result = brain.pushOperand(displayValue) {
-            displayValue = result
-        } else {
-            displayValue = 0 // should really just set it to nil and clear display
+        if displayValue != nil {
+            if let result = brain.pushOperand(displayValue!) {
+                displayValue = result
+            } else {
+                displayValue = nil
+            }
         }
     }
     
@@ -58,16 +60,16 @@ class ViewController: UIViewController {
         userIsInTheMiddleOfTypingANumber = false
         brain.reset()
         history.text = ""
-        displayValue = 0
+        displayValue = nil
     }
     
     
-    var displayValue: Double {
+    var displayValue: Double? {
         get {
-            return NSNumberFormatter().numberFromString(display.text!)!.doubleValue
+            return NSNumberFormatter().numberFromString(display.text!)?.doubleValue
         }
         set {
-            display.text = "\(newValue)"
+            display.text = newValue == nil ? "" : "\(newValue!)"
             userIsInTheMiddleOfTypingANumber = false
         }
     }
